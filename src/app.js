@@ -25,6 +25,16 @@ App = {
             await ethereum.enable()
             // Acccounts now exposed
             // web3.eth.sendTransaction({/* ... */})
+            const accounts = await ethereum.request({method: 'eth_accounts'})
+
+            await ethereum.request({
+                method: 'eth_sendTransaction',
+                params: [
+                    {
+                        from: accounts[0],
+                    }
+                ]
+            })
         } catch (error) {
             // User denied account access...
         }
@@ -34,7 +44,16 @@ App = {
             App.web3Provider = web3.currentProvider
             window.web3 = new Web3(web3.currentProvider)
             // Acccounts always exposed
+            const accounts = await ethereum.request({method: 'eth_accounts'})
             // web3.eth.sendTransaction({/* ... */})
+            await ethereum.request({
+                method: 'eth_sendTransaction',
+                params: [
+                    {
+                        from: accounts[0],
+                    }
+                ]
+            })
         }
         // Non-dapp browsers...
         else {
@@ -93,6 +112,15 @@ App = {
 
             $newTaskTemplate.show()
         }
+    },
+
+    createTask: async () => {
+        App.setLoading(true)
+        
+        const content = $('#newTask').val()
+        await App.todoList.createTask(content)
+
+        window.location.reload()
     },
 
     setLoading: (boolean) => {
