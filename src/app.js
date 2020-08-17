@@ -22,7 +22,7 @@ App = {
             window.web3 = new Web3(ethereum)
         try {
             // Request account access if needed
-            await ethereum.enable()
+            await ethereum.request('eth_requestAccounts')
             // Acccounts now exposed
             // web3.eth.sendTransaction({/* ... */})
             const accounts = await ethereum.request({method: 'eth_accounts'})
@@ -103,6 +103,7 @@ App = {
             $newTaskTemplate.find('input')
                             .prop('name', taskId)
                             .prop('checked', taskCompleted)
+                            .on('click', App.toggleCompleted)
 
             if (taskCompleted) {
                 $('#completeTaskList').append($newTaskTemplate)
@@ -120,6 +121,13 @@ App = {
         const content = $('#newTask').val()
         await App.todoList.createTask(content)
 
+        window.location.reload()
+    },
+
+    toggleCompleted: async () => {
+        App.setLoading(true)
+        const taskId = event.target.name
+        await App.todoList.toggleCompleted(taskId)
         window.location.reload()
     },
 
